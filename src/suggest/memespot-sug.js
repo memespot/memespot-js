@@ -7,13 +7,43 @@ export default function run(){
 }
 
 class Suggest {
-  constructor(target){
+  constructor(target) {
     this.target = target;
     this.$target = $(target);
+    this.on = false;
+    this.$board = this.createBoard(this.$target);
+    $("body").append(this.$board);
   }
-  initialize(){
+  initialize() {
     this.$target.keyup(e => {
-      console.log(e.target.value);
+      $.getJSON("http://www.mocky.io/v2/5645ee6c1100006432c2be01?callback=?",this.loadSuggestData.bind(this));
     });
+    this.$target.focus(e => {
+      this.on = true;
+      this.$board.show();
+    });
+    this.$target.blur(e => {
+      this.on = false;
+      this.$board.hide();
+    });
+  }
+  createBoard($target){
+    var pos = $target.position();
+    var width = $target.outerWidth();
+    var height = $target.outerHeight();
+    return $("<div></div>").css({
+      display: "none",
+      position:"absolute",
+      border: "1px solid black",
+      padding: "10px",
+      "background-color": "white",
+      top: (pos.top + height) + "px",
+      left: (pos.left) + "px"
+    });
+  }
+  loadSuggestData(data){
+    if(this.on){
+      this.$board.html(data.map(image=>{return `<img src="${image}" width="100" height="100" /> `}).join(""));
+    }
   }
 }

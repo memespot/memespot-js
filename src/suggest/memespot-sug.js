@@ -16,7 +16,7 @@ class Suggest {
   }
   initialize() {
     this.$target.keyup(e => {
-      $.getJSON("http://www.mocky.io/v2/5645ee6c1100006432c2be01?callback=?",this.loadSuggestData.bind(this));
+      $.getJSON("http://www.mocky.io/v2/5645f047110000a332c2be02?callback=?",this.loadSuggestData.bind(this));
     });
     this.$target.focus(e => {
       this.on = true;

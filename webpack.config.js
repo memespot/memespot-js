@@ -2,22 +2,28 @@ var webpack = require('webpack');
 
 module.exports = {
   entry: [
-    'webpack/hot/only-dev-server',
     './src/index.js'
   ],
   output: {
-    filename: 'lib/memespot-sug.js'
+    filename: './extension/assets/js/memespot-sug.js'
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoErrorsPlugin(),
+    new webpack.DefinePlugin({
+      __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || 'false'))
+    })
   ],
   module: {
     loaders: [
       {
         test: /\.jsx?$/,        
         exclude: /node_modules/,
-        loaders: ['babel?presets[]=es2015']
+        //loaders: ['babel?presets[]=es2015'],
+        loader: "babel",
+        query: {
+          presets: ['react','es2015']
+        }
       }
     ]
   }

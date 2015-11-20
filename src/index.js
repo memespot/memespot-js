@@ -1,2 +1,3 @@
-import run from './suggest/memespot-sug';
-run();
+import Suggest from './suggest/memespot-sug';
+
+new Suggest($("#q")).initialize();

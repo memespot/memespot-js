@@ -26,7 +26,7 @@ export default class Suggest {
       this.keyControll(e.keyCode);
       if( value != this.value ) {
         this.value = value;
-        $("#board").html();
+        $("#board").html("");
         this.apiCall(API_URL + value, this.loadSuggestData);
       }
     });

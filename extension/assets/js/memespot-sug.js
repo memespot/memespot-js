@@ -54,7 +54,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "4ee0dfc41f27a9c8bdc1"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "823b3501f33fefbe14f5"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/ 	
@@ -621,8 +621,13 @@
 	      var _this = this;
 
 	      this.$target.keyup(function (e) {
+	        if (e.keyCode === _const.Commands.DOWN) {
+	          _this.$target.blur();
+	          _this.focusBoard = true;
+	          _this.$board.find("img").eq(_this.focusIndex).css("border", "2px solid blue");
+	        }
+
 	        var value = e.target.value;
-	        _this.keyControll(e.keyCode);
 	        if (value != _this.value) {
 	          _this.value = value;
 	          $("#board").html("");
@@ -630,6 +635,9 @@
 	        }
 	      });
 	      this.$board.scroll(this.lazyLoad.bind(this));
+	      $(document).keydown(function (e) {
+	        _this.keyControll(e.keyCode);
+	      });
 	    }
 	  }, {
 	    key: 'apiCall',
@@ -682,6 +690,7 @@
 	          if (this.focusBoard) {
 	            if (this.focusIndex < _const.Display.WIDTH_SIZE) {
 	              this.focusBoard = false;
+	              this.$target.focus();
 	              this.$board.find("img").eq(this.focusIndex).css("border", "");
 	              this.focusIndex = 0;
 	            } else {

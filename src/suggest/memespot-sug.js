@@ -21,9 +21,14 @@ export default class Suggest {
     this.isLazyLoding = false;
   }
   initialize() {
-    this.$target.keyup(e => {
+    this.$target.keyup(e => {      
+      if(e.keyCode === Commands.DOWN){
+        this.$target.blur();
+        this.focusBoard = true;
+        this.$board.find("img").eq(this.focusIndex).css("border","2px solid blue");
+      }
+
       var value = e.target.value;
-      this.keyControll(e.keyCode);
       if( value != this.value ) {
         this.value = value;
         $("#board").html("");
@@ -31,6 +36,9 @@ export default class Suggest {
       }
     });
     this.$board.scroll(this.lazyLoad.bind(this));
+    $(document).keydown(e => {      
+      this.keyControll(e.keyCode);
+    });
   }
   apiCall(url, callback){
     $.getJSON(url, callback.bind(this));
@@ -73,6 +81,7 @@ export default class Suggest {
         if( this.focusBoard ) {
           if( this.focusIndex < Display.WIDTH_SIZE ) {
             this.focusBoard = false;
+            this.$target.focus();
             this.$board.find("img").eq(this.focusIndex).css("border","");
             this.focusIndex = 0;
           } else {

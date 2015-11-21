@@ -54,7 +54,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "1ea40ce5295e6458330e"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "09d799523b406d80a951"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/ 	
@@ -611,6 +611,8 @@
 	    this.focusBoard = false;
 	    this.focusIndex = 0;
 	    this.count = 0;
+	    this.nextUrl = null;
+	    this.isLazyLoding = false;
 	  }
 
 	  _createClass(Suggest, [{
@@ -623,18 +625,44 @@
 	        _this.keyControll(e.keyCode);
 	        if (value != _this.value) {
 	          _this.value = value;
-	          $.getJSON(API_URL + value, _this.loadSuggestData.bind(_this));
+	          $("#board").html();
+	          _this.apiCall(API_URL + value, _this.loadSuggestData);
 	        }
 	      });
+	      this.$board.scroll(this.lazyLoad.bind(this));
+	    }
+	  }, {
+	    key: 'apiCall',
+	    value: function apiCall(url, callback) {
+	      $.getJSON(url, callback.bind(this));
 	    }
 	  }, {
 	    key: 'loadSuggestData',
 	    value: function loadSuggestData(data) {
-	      this.count = data.results.length;
+	      if (!!data.next) {
+	        this.nextUrl = data.next.replace(/jQuery[0-9_]*/, "?");
+	        this.isLazyLoding = true;
+	      } else {
+	        this.nextUrl = null;
+	      }
+
 	      var images = data.results.map(function (result) {
 	        return result.url;
 	      });
-	      _reactDom2.default.render(_react2.default.createElement(_ImageList2.default, { images: images, onImageClick: this.onImageClick.bind(this) }), document.getElementById('board'));
+	      var div = document.createElement("div");
+	      _reactDom2.default.render(_react2.default.createElement(_ImageList2.default, { images: images, onImageClick: this.onImageClick.bind(this) }), div);
+
+	      this.$board.append($(div));
+	      this.count = this.$board.find("img").length;
+	    }
+	  }, {
+	    key: 'lazyLoad',
+	    value: function lazyLoad() {
+	      if (this.isLazyLoding && !!this.nextUrl && this.$board.height() - this.$board.scrollTop() < 200) {
+	        this.isLazyLoding = false;
+	        console.log("call");
+	        this.apiCall(this.nextUrl, this.loadSuggestData);
+	      }
 	    }
 	  }, {
 	    key: 'keyControll',
@@ -654,8 +682,8 @@
 	          if (this.focusBoard) {
 	            if (this.focusIndex < _const.Display.WIDTH_SIZE) {
 	              this.focusBoard = false;
-	              this.focusIndex = 0;
 	              this.$board.find("img").eq(this.focusIndex).css("border", "");
+	              this.focusIndex = 0;
 	            } else {
 	              this.move(-_const.Display.WIDTH_SIZE);
 	              this.$board.animate({ scrollTop: '' + (this.$board.scrollTop() - _const.Display.IMAGE_HEIGHT) });
@@ -669,6 +697,7 @@
 	            } else {
 	              this.move(_const.Display.WIDTH_SIZE);
 	              this.$board.animate({ scrollTop: '' + (this.$board.scrollTop() + _const.Display.IMAGE_HEIGHT) });
+	              this.lazyLoad();
 	            }
 	          } else {
 	            this.focusBoard = true;
@@ -678,8 +707,8 @@
 	          break;
 	        case _const.Commands.ENTER:
 	          if (this.focusBoard) {
-	            console.log(this.$board.find("img").eq(this.focusIndex).data("url"));
 	            this.$result.val(this.$board.find("img").eq(this.focusIndex).data("url"));
+	            this.copyToClipboard(this.$board.find("img").eq(this.focusIndex).data("url"));
 	          }
 	          break;
 	      }
@@ -699,6 +728,18 @@
 	      this.focusIndex = num;
 	      this.$board.find("img").eq(this.focusIndex).css("border", "2px solid blue");
 	      this.$result.val(this.$board.find("img").eq(this.focusIndex).data("url"));
+	      this.copyToClipboard(this.$board.find("img").eq(this.focusIndex).data("url"));
+	    }
+	  }, {
+	    key: 'copyToClipboard',
+	    value: function copyToClipboard(text) {
+	      if (copyTextToClipboard(text)) {
+	        $("#copyMessage").show();
+	        $("#copyMessage").css("opacity", 0.1);
+	        $("#copyMessage").animate({ opacity: 1.0 }, 1300, function () {
+	          $("#copyMessage").hide();
+	        });
+	      }
 	    }
 	  }]);
 

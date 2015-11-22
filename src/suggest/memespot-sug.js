@@ -66,7 +66,6 @@ export default class Suggest {
     var height = this.$board.find(".division").toArray().map( div => { return div.offsetHeight}).reduce((prev,cur)=>{ return prev + cur});
     if(this.isLazyLoding && !!this.nextUrl && (height - this.$board.scrollTop() < 800 )){
       this.isLazyLoding = false;
-      console.log("call");
       this.apiCall(this.nextUrl, this.loadSuggestData);
     }
   }

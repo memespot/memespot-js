@@ -54,7 +54,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "16f806abf382586a1355"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "d551f354bd16f63d2632"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/ 	
@@ -611,6 +611,7 @@
 	    this.focusBoard = false;
 	    this.focusIndex = 0;
 	    this.count = 0;
+	    this.paging = 0;
 	    this.nextUrl = null;
 	    this.isLazyLoding = false;
 	  }
@@ -631,6 +632,7 @@
 	        if (value != _this.value) {
 	          _this.value = value;
 	          $("#board").html("");
+	          _this.paging = 0;
 	          _this.apiCall(API_URL + value, _this.loadSuggestData);
 	        }
 	      });
@@ -658,7 +660,9 @@
 	        return result.url;
 	      });
 	      var div = document.createElement("div");
-	      _reactDom2.default.render(_react2.default.createElement(_ImageList2.default, { images: images, onImageClick: this.onImageClick.bind(this) }), div);
+	      div.className = "division";
+	      _reactDom2.default.render(_react2.default.createElement(_ImageList2.default, { images: images, paging: _const.ApiParams.LIMIT * this.paging, onImageClick: this.onImageClick.bind(this) }), div);
+	      this.paging += 1;
 
 	      this.$board.append($(div));
 	      this.count = this.$board.find("img").length;
@@ -666,9 +670,13 @@
 	  }, {
 	    key: 'lazyLoad',
 	    value: function lazyLoad() {
-	      if (this.isLazyLoding && !!this.nextUrl && this.$board.height() - this.$board.scrollTop() < 200) {
+	      var height = this.$board.find(".division").toArray().map(function (div) {
+	        return div.offsetHeight;
+	      }).reduce(function (prev, cur) {
+	        return prev + cur;
+	      });
+	      if (this.isLazyLoding && !!this.nextUrl && height - this.$board.scrollTop() < 800) {
 	        this.isLazyLoding = false;
-	        console.log("call");
 	        this.apiCall(this.nextUrl, this.loadSuggestData);
 	      }
 	    }
@@ -20388,7 +20396,7 @@
 	        null,
 	        this.props.images.map(function (image, index) {
 	          return _react2.default.createElement(_Image2.default, { url: image, onClick: function onClick() {
-	              return _this.props.onImageClick(index);
+	              return _this.props.onImageClick(index + _this.props.paging);
 	            }, key: index });
 	        })
 	      );
@@ -20402,6 +20410,7 @@
 
 	ImageList.propTypes = {
 	  images: _react.PropTypes.arrayOf(_react.PropTypes.string.isRequired).isRequired,
+	  paging: _react.PropTypes.number.isRequired,
 	  onImageClick: _react.PropTypes.func.isRequired
 	};
 
@@ -20478,7 +20487,7 @@
 	};
 
 	var ApiParams = exports.ApiParams = {
-	  LIMIT: 30
+	  LIMIT: 28
 	};
 
 	var Display = exports.Display = {

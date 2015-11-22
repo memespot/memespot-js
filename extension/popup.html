@@ -33,10 +33,13 @@
     }
     #board {
       margin:10px;
-      width:485px;
+      width:486px;
       height:446px;
       overflow-x:hidden;
       overflow-y:scroll; 
+    }
+    #board .division {
+      overflow: hidden;
     }
     #board::-webkit-scrollbar { 
       display: none; 
@@ -52,14 +55,20 @@
       padding:15px;
       background-repeat: no-repeat;
       background-position: 10px center;
-      color: #00529B;
-      background-color: #BDE5F8;
+      color: #FFF;
+      background-color: #343d46;
       opacity: 0.5;
     }
 
     .image {
       float: left;
       margin: 5px;
+      width: 104px;
+      height: 104px;
+    }
+
+    .selected {
+      border: 2px solid #343d46;
     }
 
   </style>

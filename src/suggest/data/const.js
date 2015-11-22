@@ -8,7 +8,7 @@ export const Commands = {
 };
 
 export const ApiParams = {
-  LIMIT : 30
+  LIMIT : 28
 }
 
 export const Display = {

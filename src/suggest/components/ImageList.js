@@ -6,7 +6,7 @@ export default class ImageList extends Component {
     return (
       <div>
         {this.props.images.map((image, index) =>
-          <Image url={image} onClick={() => this.props.onImageClick(index)} key={index} />
+          <Image url={image} onClick={() => this.props.onImageClick(index + this.props.paging)} key={index} />
         )}
       </div>
     );
@@ -15,5 +15,6 @@ export default class ImageList extends Component {
 
 ImageList.propTypes = {
   images: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+  paging: PropTypes.number.isRequired,
   onImageClick: PropTypes.func.isRequired
 };

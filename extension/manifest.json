@@ -3,7 +3,7 @@
 
   "name": "MemeSpot",
   "description": "This extension gives you a URL what you want to use for funny image",
-  "version":"1.0",
+  "version":"1.0.1",
   
   "browser_action": {
     "default_icon": "./assets/img/icon.png",
@@ -17,10 +17,10 @@
   "commands" : {
     "_execute_browser_action":{
       "suggested_key": {
-        "chromeos": "Ctrl+Shift+O",
-        "linux": "Ctrl+Shift+O",
-        "mac": "Command+Shift+O",
-        "windows": "Ctrl+Shift+O"
+        "chromeos": "Ctrl+Shift+K",
+        "linux": "Ctrl+Shift+K",
+        "mac": "Command+Shift+K",
+        "windows": "Ctrl+Shift+K"
       }
     }
   },

@@ -54,7 +54,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "09d799523b406d80a951"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "16f806abf382586a1355"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/ 	
@@ -621,15 +621,23 @@
 	      var _this = this;
 
 	      this.$target.keyup(function (e) {
+	        if (e.keyCode === _const.Commands.DOWN) {
+	          _this.$target.blur();
+	          _this.focusBoard = true;
+	          _this.$board.find(".image").eq(_this.focusIndex).addClass("selected");
+	        }
+
 	        var value = e.target.value;
-	        _this.keyControll(e.keyCode);
 	        if (value != _this.value) {
 	          _this.value = value;
-	          $("#board").html();
+	          $("#board").html("");
 	          _this.apiCall(API_URL + value, _this.loadSuggestData);
 	        }
 	      });
 	      this.$board.scroll(this.lazyLoad.bind(this));
+	      $(document).keydown(function (e) {
+	        _this.keyControll(e.keyCode);
+	      });
 	    }
 	  }, {
 	    key: 'apiCall',
@@ -682,7 +690,8 @@
 	          if (this.focusBoard) {
 	            if (this.focusIndex < _const.Display.WIDTH_SIZE) {
 	              this.focusBoard = false;
-	              this.$board.find("img").eq(this.focusIndex).css("border", "");
+	              this.$target.focus();
+	              this.$board.find(".image").eq(this.focusIndex).removeClass("selected");
 	              this.focusIndex = 0;
 	            } else {
 	              this.move(-_const.Display.WIDTH_SIZE);
@@ -702,7 +711,7 @@
 	          } else {
 	            this.focusBoard = true;
 	            this.focusIndex = 0;
-	            this.$board.find("img").eq(this.focusIndex).css("border", "2px solid blue");
+	            this.$board.find(".image").eq(this.focusIndex).addClass("selected");
 	          }
 	          break;
 	        case _const.Commands.ENTER:
@@ -716,17 +725,17 @@
 	  }, {
 	    key: 'move',
 	    value: function move(num) {
-	      this.$board.find("img").eq(this.focusIndex).css("border", "");
+	      this.$board.find(".image").eq(this.focusIndex).removeClass("selected");
 	      this.focusIndex = this.focusIndex + num;
-	      this.$board.find("img").eq(this.focusIndex).css("border", "2px solid blue");
+	      this.$board.find(".image").eq(this.focusIndex).addClass("selected");
 	    }
 	  }, {
 	    key: 'onImageClick',
 	    value: function onImageClick(num) {
 	      this.focusBoard = true;
-	      this.$board.find("img").eq(this.focusIndex).css("border", "");
+	      this.$board.find(".image").eq(this.focusIndex).removeClass("selected");
 	      this.focusIndex = num;
-	      this.$board.find("img").eq(this.focusIndex).css("border", "2px solid blue");
+	      this.$board.find(".image").eq(this.focusIndex).addClass("selected");
 	      this.$result.val(this.$board.find("img").eq(this.focusIndex).data("url"));
 	      this.copyToClipboard(this.$board.find("img").eq(this.focusIndex).data("url"));
 	    }
@@ -736,7 +745,7 @@
 	      if (copyTextToClipboard(text)) {
 	        $("#copyMessage").show();
 	        $("#copyMessage").css("opacity", 0.1);
-	        $("#copyMessage").animate({ opacity: 1.0 }, 1300, function () {
+	        $("#copyMessage").animate({ opacity: 1.0 }, 800, function () {
 	          $("#copyMessage").hide();
 	        });
 	      }

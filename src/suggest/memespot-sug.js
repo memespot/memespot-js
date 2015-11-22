@@ -17,20 +17,30 @@ export default class Suggest {
     this.focusBoard = false;
     this.focusIndex = 0;
     this.count = 0;
+    this.paging = 0;
     this.nextUrl = null;
     this.isLazyLoding = false;
   }
   initialize() {
-    this.$target.keyup(e => {
+    this.$target.keyup(e => {      
+      if(e.keyCode === Commands.DOWN){
+        this.$target.blur();
+        this.focusBoard = true;
+        this.$board.find(".image").eq(this.focusIndex).addClass("selected");
+      }
+
       var value = e.target.value;
-      this.keyControll(e.keyCode);
       if( value != this.value ) {
         this.value = value;
-        $("#board").html();
+        $("#board").html("");
+        this.paging = 0;
         this.apiCall(API_URL + value, this.loadSuggestData);
       }
     });
     this.$board.scroll(this.lazyLoad.bind(this));
+    $(document).keydown(e => {      
+      this.keyControll(e.keyCode);
+    });
   }
   apiCall(url, callback){
     $.getJSON(url, callback.bind(this));
@@ -45,13 +55,16 @@ export default class Suggest {
 
     var images = data.results.map( result => { return result.url; });
     var div = document.createElement("div");
-    ReactDOM.render(<ImageList images={images} onImageClick={this.onImageClick.bind(this)} />, div);
+    div.className = "division";
+    ReactDOM.render(<ImageList images={images} paging={ApiParams.LIMIT * this.paging} onImageClick={this.onImageClick.bind(this)} />, div);
+    this.paging += 1;
     
     this.$board.append($(div));
     this.count = this.$board.find("img").length;
   }
   lazyLoad(){
-    if(this.isLazyLoding && !!this.nextUrl && (this.$board.height() - this.$board.scrollTop() < 200 )){
+    var height = this.$board.find(".division").toArray().map( div => { return div.offsetHeight}).reduce((prev,cur)=>{ return prev + cur});
+    if(this.isLazyLoding && !!this.nextUrl && (height - this.$board.scrollTop() < 800 )){
       this.isLazyLoding = false;
       console.log("call");
       this.apiCall(this.nextUrl, this.loadSuggestData);
@@ -73,7 +86,8 @@ export default class Suggest {
         if( this.focusBoard ) {
           if( this.focusIndex < Display.WIDTH_SIZE ) {
             this.focusBoard = false;
-            this.$board.find("img").eq(this.focusIndex).css("border","");
+            this.$target.focus();
+            this.$board.find(".image").eq(this.focusIndex).removeClass("selected");
             this.focusIndex = 0;
           } else {
             this.move(-Display.WIDTH_SIZE);
@@ -93,7 +107,7 @@ export default class Suggest {
         } else {
           this.focusBoard = true;
           this.focusIndex = 0;
-          this.$board.find("img").eq(this.focusIndex).css("border","2px solid blue");
+          this.$board.find(".image").eq(this.focusIndex).addClass("selected");
         }
         break;
       case Commands.ENTER :
@@ -105,15 +119,15 @@ export default class Suggest {
     }
   }
   move(num){
-    this.$board.find("img").eq(this.focusIndex).css("border","");
+    this.$board.find(".image").eq(this.focusIndex).removeClass("selected");
     this.focusIndex = this.focusIndex + num;
-    this.$board.find("img").eq(this.focusIndex).css("border","2px solid blue");
+    this.$board.find(".image").eq(this.focusIndex).addClass("selected");
   }
   onImageClick(num){
     this.focusBoard = true;
-    this.$board.find("img").eq(this.focusIndex).css("border","");
+    this.$board.find(".image").eq(this.focusIndex).removeClass("selected");
     this.focusIndex = num;
-    this.$board.find("img").eq(this.focusIndex).css("border","2px solid blue");
+    this.$board.find(".image").eq(this.focusIndex).addClass("selected");
     this.$result.val(this.$board.find("img").eq(this.focusIndex).data("url"));
     this.copyToClipboard(this.$board.find("img").eq(this.focusIndex).data("url"));
   }
@@ -121,7 +135,7 @@ export default class Suggest {
     if(copyTextToClipboard(text)){
       $("#copyMessage").show();
       $("#copyMessage").css("opacity",0.1);
-      $("#copyMessage").animate({opacity:1.0},1300,function(){$("#copyMessage").hide()})
+      $("#copyMessage").animate({opacity:1.0},800,function(){$("#copyMessage").hide()})
     }
   }
 }

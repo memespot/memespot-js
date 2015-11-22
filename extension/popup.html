@@ -8,7 +8,8 @@
   <script src="./assets/js/copy-clipboard.js"></script>
   <style>
     header {
-      padding: 5px;
+      padding: 20px;
+      background: #343d46;
     }        
     body {
       width: 500px;
@@ -16,6 +17,12 @@
     }
     #q {
       width: 100%;
+      border: none;
+      padding-left: 25px;
+      -webkit-border-radius: 5px;
+      background-image: url("assets/img/search-icon.png");
+      background-repeat:no-repeat;
+      background-position: 5px 5px;
     }
     #result {
       width: 100%;
@@ -30,6 +37,9 @@
       height:446px;
       overflow-x:hidden;
       overflow-y:scroll; 
+    }
+    #board::-webkit-scrollbar { 
+      display: none; 
     }
 
     #copyMessage {

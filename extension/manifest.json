@@ -3,7 +3,7 @@
 
   "name": "MemeSpot",
   "description": "This extension gives you a URL what you want to use for funny image",
-  "version":"1.0.2",
+  "version":"1.0.3",
   
   "browser_action": {
     "default_icon": "./assets/img/icon.png",
@@ -24,6 +24,13 @@
       }
     }
   },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["./assets/js/jquery-2.1.4.min.js","./assets/js/jquery-ui.min.js","./assets/js/contentscript.js"],
+      "run_at": "document_end"
+    }
+  ],
   "permissions": [
     "tabs",
     "<all_urls>"    
